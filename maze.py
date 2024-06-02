@@ -1,5 +1,4 @@
-import subprocess
-import sys
+from frontier import QueueFrontier, StackFrontier
 
 
 class Node:
@@ -9,52 +8,13 @@ class Node:
         self.action = action
 
 
-class Frontier:
-    def __init__(self):
-        self.frontier = []
-
-    def add(self, node):
-        self.frontier.append(node)
-
-    def contains_state(self, state):
-        return any(node.state == state for node in self.frontier)
-
-    def empty(self):
-        return len(self.frontier) == 0
-
-
-class StackFrontier(Frontier):
-    def __init__(self):
-        super().__init__()
-
-    def remove(self):
-        if self.empty():
-            raise Exception("empty frontier")
-        else:
-            node = self.frontier[-1]
-            self.frontier = self.frontier[:-1]
-            return node
-
-
-class QueueFrontier(Frontier):
-    def __init__(self):
-        super().__init__()
-
-    def remove(self):
-        if self.empty():
-            raise Exception("empty frontier")
-        else:
-            node = self.frontier[0]
-            self.frontier = self.frontier[1:]
-            return node
-
-
 class Maze:
     def __init__(self, strategy, filename):
         self.strategy = strategy
+        self.path_to_maze_file = f"./mazes/{filename}.txt"
 
         # Read file and set height and width of maze
-        with open(filename) as f:
+        with open(self.path_to_maze_file) as f:
             contents = f.read()
 
         # Validate start and goal
@@ -223,18 +183,3 @@ class Maze:
                 )
 
         img.save(filename)
-
-
-if len(sys.argv) != 3:
-    sys.exit("Usage: python maze.py {bfs|dps} maze.txt")
-
-m = Maze(sys.argv[1], sys.argv[2])
-print("Maze:")
-m.print()
-print("Solving...")
-m.solve()
-print("States Explored:", m.num_explored)
-print("Solution:")
-m.print()
-m.output_image("maze.png", show_explored=True)
-subprocess.run(["open", "maze.png"])

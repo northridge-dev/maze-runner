@@ -58,7 +58,7 @@ class Maze:
                     fill = (220, 235, 113)
 
                 # Explored
-                elif solution is not None and (i, j) in explored:
+                elif explored is not None and (i, j) in explored:
                     fill = (212, 97, 85)
 
                 # Empty cell
